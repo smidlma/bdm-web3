@@ -1,0 +1,162 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidState",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "adr",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "funds",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isWinner",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct LuckyBox.Player[]",
+            "name": "players",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalFunds",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "boxId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct LuckyBox.Game",
+        "name": "info",
+        "type": "tuple"
+      }
+    ],
+    "name": "GameChanged",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_playerName",
+        "type": "string"
+      }
+    ],
+    "name": "addFunds",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllGames",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "adr",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "funds",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isWinner",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct LuckyBox.Player[]",
+            "name": "players",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalFunds",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "boxId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct LuckyBox.Game[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pickWinner",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
