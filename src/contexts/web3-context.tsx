@@ -35,8 +35,12 @@ export const Web3Provider = ({ children }: PropsWithChildren) => {
       if (window.ethereum) {
         const web3Instance = new Web3(window.ethereum)
         const accounts = await web3Instance.eth.getAccounts()
-        if (account) {
+        console.log(accounts)
+
+        if (accounts.length > 0) {
           setAccount(accounts[0])
+          console.log('set conn')
+
           setConnected(true)
         }
 
@@ -44,7 +48,7 @@ export const Web3Provider = ({ children }: PropsWithChildren) => {
       }
     }
     checkConnection()
-  }, [])
+  }, [account])
 
   const connectToMetamask = async () => {
     if (window.ethereum) {

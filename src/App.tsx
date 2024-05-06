@@ -18,6 +18,20 @@ const App = () => {
 
   const [games, setGames] = useState<Game[]>([])
 
+  const [isPicking, setIsPicking] = useState(false)
+
+  const pickWinner = async () => {
+    try {
+      setIsPicking(true)
+      await contract?.methods.pickWinner().send({ from: account })
+      await getAllGames()
+      setIsPicking(false)
+    } catch (err) {
+      console.error(err)
+      setIsPicking(false)
+    }
+  }
+
   const addFunds = async (value: number, name: string) => {
     try {
       const amountInWei = web3?.utils.toWei(value, 'wei')
@@ -56,8 +70,6 @@ const App = () => {
   const getAllGames = useCallback(async () => {
     const games = await contract?.methods.getAllGames().call()
 
-    console.log(games)
-
     setGames(games as Game[])
   }, [contract])
 
@@ -66,6 +78,18 @@ const App = () => {
   }, [getAllGames])
 
   const isGameActive = games?.some((g) => g.isActive) ?? false
+
+  useEffect(() => {
+    const timer = setInterval(async () => {
+      await getAllGames()
+      // console.log('fetching..')
+    }, 5500)
+
+    // Cleanup function
+    return () => {
+      clearInterval(timer)
+    }
+  }, [getAllGames])
 
   return (
     <>
@@ -81,6 +105,18 @@ const App = () => {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify='end'>
+          <NavbarItem>
+            <Button
+              onPress={pickWinner}
+              color='success'
+              href='#'
+              variant='flat'
+              isDisabled={!isGameActive}
+              isLoading={isPicking}
+            >
+              Pick Winner
+            </Button>
+          </NavbarItem>
           <NavbarItem>
             <Button
               onPress={getAllGames}
@@ -115,24 +151,26 @@ const App = () => {
             onDepositFunds={addFunds}
           />
         )}
-        {games?.map((g) => (
-          <LuckyBoxCard
-            key={g.boxId}
-            players={g.players}
-            status={
-              differenceInSeconds(
-                new Date(Number(g.endTime) * 1000),
-                new Date()
-              ) <= 0
-                ? 'finished'
-                : 'running'
-            }
-            endDateTime={new Date(Number(g.endTime) * 1000)}
-            title={`Game #${g.boxId}`}
-            totalFunds={Number(g.totalFunds)}
-            onDepositFunds={addFunds}
-          />
-        ))}
+        {games
+          ?.sort((g1, g2) => Number(g2.endTime) - Number(g1.endTime))
+          ?.map((g) => (
+            <LuckyBoxCard
+              key={g.boxId}
+              players={g.players}
+              status={
+                differenceInSeconds(
+                  new Date(Number(g.endTime) * 1000),
+                  new Date()
+                ) <= 0
+                  ? 'finished'
+                  : 'running'
+              }
+              endDateTime={new Date(Number(g.endTime) * 1000)}
+              title={`Game #${g.boxId}`}
+              totalFunds={Number(g.totalFunds)}
+              onDepositFunds={addFunds}
+            />
+          ))}
       </div>
     </>
   )

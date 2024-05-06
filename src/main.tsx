@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <NextUIProvider>
       <Web3Provider>
-        <main className='dark text-foreground bg-background h-screen'>
+        <main className='dark text-foreground bg-background h-full'>
           <App />
           <ToastContainer
             position='top-right'

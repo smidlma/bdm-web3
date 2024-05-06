@@ -11,8 +11,8 @@ import {
   Input,
   Progress,
 } from '@nextui-org/react'
-import { differenceInSeconds } from 'date-fns'
-import { useCallback, useEffect, useState } from 'react'
+import { differenceInSeconds, formatDistance } from 'date-fns'
+import { useEffect, useState } from 'react'
 import { Player } from '../types'
 
 type LuckyBoxCardProps = {
@@ -69,19 +69,6 @@ export const LuckyBoxCard = ({
     }
   }
 
-  const renderPlayer = useCallback(
-    (x: Player, idx: number) => (
-      <div key={x.adr} className='flex items-center gap-4'>
-        <Avatar src={`https://i.pravatar.cc/15${idx}`} />
-        <div className='justify-between flex'>
-          <p className='text-ellipsis w-40'>{x.name} </p>
-          <p> {(Number(x.funds) / totalFunds) * 100} %</p>
-        </div>
-      </div>
-    ),
-    [totalFunds]
-  )
-
   return (
     <Card
       isBlurred
@@ -100,7 +87,8 @@ export const LuckyBoxCard = ({
           <p className='text-md'>#{title}</p>
           <p className='text-small text-default-500'>velke-penize.org</p>
         </div>
-        <div className=''>
+        <div className='flex items-center gap-5'>
+          <div>Game Price: {totalFunds ?? 0} Wei</div>
           <Chip color='success' variant='shadow'>
             {status.toUpperCase()}
           </Chip>
@@ -109,21 +97,35 @@ export const LuckyBoxCard = ({
       <Divider />
       <CardBody>
         <div className='flex flex-col gap-2'>
-          {players.map((x, idx) => renderPlayer(x, idx))}
+          {players.map((x, idx) => (
+            <PlayerDetail
+              key={x.adr}
+              player={x}
+              id={idx}
+              totalFunds={totalFunds}
+            />
+          ))}
+
+          {status == 'new' ? (
+            <Progress
+              label='Game is ready!'
+              value={100}
+              className='w-full pt-4'
+            />
+          ) : (
+            <Progress
+              label={
+                timeLeft <= 0
+                  ? status === 'running'
+                    ? 'Pick The Winner'
+                    : 'Game has finished'
+                  : `${timeLeft} sec...`
+              }
+              value={timeLeft <= 0 ? 0 : PROGRESS_NORMALIZED * timeLeft}
+              className='w-full pt-4'
+            />
+          )}
         </div>
-        {status == 'new' ? (
-          <Progress
-            label='Game is ready!'
-            value={100}
-            className='max-w-md pt-4'
-          />
-        ) : (
-          <Progress
-            label={timeLeft <= 0 ? 'Game has finished' : `${timeLeft} sec...`}
-            value={timeLeft <= 0 ? 0 : PROGRESS_NORMALIZED * timeLeft}
-            className='max-w-md pt-4'
-          />
-        )}
       </CardBody>
       <Divider />
 
@@ -155,9 +157,37 @@ export const LuckyBoxCard = ({
             </Button>
           </>
         ) : (
-          `Winner: ${winner && renderPlayer(winner, 1)}`
+          <p>{formatDistance(endDateTime, new Date(), { addSuffix: true })}</p>
         )}
       </CardFooter>
     </Card>
+  )
+}
+
+export const PlayerDetail = ({
+  player,
+  id = 1,
+  totalFunds,
+}: {
+  player: Player
+  id?: number
+  totalFunds?: number
+  isRunning?: boolean
+}) => {
+  return (
+    <div
+      className={`flex items-center gap-4 ${
+        player.isWinner && 'border-success-300 border-2 rounded-lg'
+      } p-1 `}
+    >
+      <Avatar src={`https://i.pravatar.cc/15${id}`} />
+      <div className='justify-between flex gap-3'>
+        <p className='w-40'>{player.name} </p>
+        <p>Bet: {Number(player.funds)} Wei</p>
+        {totalFunds && (
+          <p> Chance: {(Number(player.funds) / totalFunds) * 100} %</p>
+        )}
+      </div>
+    </div>
   )
 }
