@@ -83,7 +83,7 @@ const App = () => {
     const timer = setInterval(async () => {
       await getAllGames()
       // console.log('fetching..')
-    }, 5500)
+    }, 1000)
 
     // Cleanup function
     return () => {
